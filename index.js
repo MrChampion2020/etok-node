@@ -7,8 +7,10 @@ const app = express();
 const port = 4000;
 const cors = require("cors");
 
-const http = require("http").createServer(app);
-const io = require("socket.io")(http, {
+const http = require("http");
+
+const server = http.createServer(app);
+const io = socketIo(server, {
   cors: {
     origin: "*", // Allow all origins
     methods: ["GET", "POST"],
@@ -16,7 +18,15 @@ const io = require("socket.io")(http, {
     credentials: true,
   },
 });
-
+/*const io = require("socket.io")(http, {
+  cors: {
+    origin: "*", // Allow all origins
+    methods: ["GET", "POST"],
+    allowedHeaders: ["my-custom-header"],
+    credentials: true,
+  },
+});
+*/
 const jwt = require("jsonwebtoken");
 
 app.use(
@@ -39,9 +49,12 @@ mongoose
     console.log("Error connecting to MongoDb", error);
   });
 
-app.listen(port, () => {
+  server.listen(port, () => {
+    console.log(`Server running on port ${port}`);
+  });
+/*app.listen(port, () => {
   console.log(`Server running on port ${port}`);
-});
+});*/
 
 const User = require("./models/user");
 const Chat = require("./models/message");
@@ -301,9 +314,9 @@ io.on("connection", (socket) => {
   });
 });
 
-http.listen(8000, () => {
+/*http.listen(8000, () => {
   console.log("Socket.IO server running on port 8000");
-});
+});*/
 
 app.get("/messages", async (req, res) => {
   try {
