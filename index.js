@@ -461,7 +461,27 @@ io.on("connection", (socket) => {
   });
 });
 
+// Check if a user is online
+socket.on("checkUserOnline", (receiverId, callback) => {
+  // Check if the receiver is online by checking their socket connection
+  const online = sockets[receiverId] !== undefined;
+  callback(online);
+});
 
+// Deliver a missed call record
+socket.on("deliverMissedCall", (receiverId, senderId) => {
+  // Deliver the missed call record to the receiver's ChatRoom
+  // by emitting a "missedCall" event to the receiver's socket
+  if (sockets[receiverId] !== undefined) {
+    sockets[receiverId].emit("missedCall", senderId);
+  } else {
+    // If the receiver is offline, store the missed call record in the database
+    axios.post(`${API_URL}/missedCalls`, {
+      receiverId,
+      senderId,
+    });
+  }
+});
 
 /*
 // Set call values API
