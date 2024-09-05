@@ -380,11 +380,11 @@ io.on("connection", (socket) => {
     callController.makeCall(data);
   });
 
-  socket.on("answerCall", (data) => {
+  io.on("answerCall", (data) => {
     callController.answerCall(data);
   });
 
-  socket.on("endCall", (data) => {
+  io.on("endCall", (data) => {
     callController.endCall(data);
   });
 });
@@ -424,7 +424,7 @@ io.on("connection", (socket) => {
       });
   });
 
-  socket.on("answerCall", (data) => {
+  io.on("answerCall", (data) => {
     const { callId, answer } = data;
     const peerConnection = peerConnections[callId];
     if (!peerConnection) return;
@@ -450,7 +450,7 @@ io.on("connection", (socket) => {
       });
   });
 
-  socket.on("endCall", (data) => {
+  io.on("endCall", (data) => {
     const { callId } = data;
     const peerConnection = peerConnections[callId];
     if (!peerConnection) return;
@@ -462,14 +462,14 @@ io.on("connection", (socket) => {
 });
 
 // Check if a user is online
-socket.on("checkUserOnline", (receiverId, callback) => {
+io.on("checkUserOnline", (receiverId, callback) => {
   // Check if the receiver is online by checking their socket connection
   const online = sockets[receiverId] !== undefined;
   callback(online);
 });
 
 // Deliver a missed call record
-socket.on("deliverMissedCall", (receiverId, senderId) => {
+io.on("deliverMissedCall", (receiverId, senderId) => {
   // Deliver the missed call record to the receiver's ChatRoom
   // by emitting a "missedCall" event to the receiver's socket
   if (sockets[receiverId] !== undefined) {
