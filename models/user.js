@@ -14,6 +14,14 @@ const userSchema = new Schema({
   city: { type: String, required: true },
   homeTown: { type: String, required: true },
   datingPreferences: [{ type: String }],
+  Coin: Number,
+  diamond: number,
+  kiss: number,
+  heart: number,
+  audioCallValue: Number,
+  videoCallValue: Number,
+  receiveAudioCalls: Boolean,
+  receiveVideoCalls: Boolean,
   lookingFor: { type: String, required: true },
   imageUrls: [{ type: String }],
   prompts: [
@@ -32,6 +40,13 @@ const userSchema = new Schema({
   ],
   matches: [{ type: Schema.Types.ObjectId, ref: "User" }],
   blockedUsers: [{ type: Schema.Types.ObjectId, ref: "User" }],
+});
+
+userSchema.pre('save', function(next) {
+  if (!this.referralLink) {
+    this.referralLink = `https://etok.us/register?ref=${this.lastName}`;
+  }
+  next();
 });
 
 const User = mongoose.model("User", userSchema);
